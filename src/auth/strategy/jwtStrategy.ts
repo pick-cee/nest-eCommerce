@@ -15,10 +15,10 @@ export class JwTStrategy extends PassportStrategy(Strategy, 'jwt'){
             secretOrKey: configService.get('JWT_SECRET')
         })
     }
-    async validate(payload: {sub: number, email: string, firstName: string, lastName: string}){
-        const user = this.userModel.findById({_id: payload.sub})
+    async validate(payload: {sub: any, email: string, firstName: string, lastName: string}){
+        const user = this.userModel.findOne({_id: payload.sub})
 
-        delete (await user).password
+        // delete (await user).password
         return payload
     }
 }

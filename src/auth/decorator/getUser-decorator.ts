@@ -7,8 +7,8 @@ interface IUserRequest extends express.Request {
 }
 
 export const GetUser = createParamDecorator(
-    (data: string | undefined, ctx: ExecutionContext) => {
-        const request: IUserRequest = ctx.switchToHttp().getRequest()
+    (data: any | undefined, ctx: ExecutionContext) => {
+        const request: Express.Request = ctx.switchToHttp().getRequest()
         if(data){
             return request.user[data]
         }
