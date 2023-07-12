@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUser } from 'src/auth/decorator';
 import { EditUserDTO } from './dto/edit-user.dto';
@@ -10,8 +10,20 @@ export class UserController {
     constructor(private readonly userService: UserService){}
 
     @HttpCode(HttpStatus.OK)
+    @Patch('changePassword')
+    changePassword(@GetUser('userId') userId: any, @Body('password') password: string){
+        return this.userService.changePassword(userId, password)
+    }
+
+    @HttpCode(HttpStatus.OK)
     @Patch('editUser')
-    updateUser(@GetUser('_id') userId: any, @Body() dto: EditUserDTO){
+    updateUser(@GetUser('userId') userId: any, @Body() dto: EditUserDTO){
         return this.userService.updateUser(userId, dto)
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Delete('deleteUser')
+    deleteUser(@GetUser('userId') userId: any){
+        return this.userService.deleteUser(userId)
     }
 }

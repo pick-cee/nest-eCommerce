@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/user/userSchema';
@@ -37,7 +37,7 @@ export class AuthService {
         }
         const pwMatches = await argon.verify(user.password, signIn.password)
         if(!pwMatches){
-            throw new NotFoundException("Password incorrect")
+            throw new ForbiddenException("Password incorrect")
         }
         delete user.password
         return this.signToken(user._id, user.email)
