@@ -6,9 +6,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppConfigurationModule } from './configuration';
 import { PaymentModule } from './payment/payment.module';
 import { ProductModule } from './product/product.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [AuthModule, UserModule,ConfigModule.forRoot({isGlobal: true}), 
+    RedisModule.forRoot({
+      config: {
+        host: 'localhost',
+        port: 6379
+      }
+    }),
    AppConfigurationModule, MongooseModule.forRootAsync({
     imports: [AppConfigurationModule],
     useFactory: async (config: ConfigService) => {

@@ -1,15 +1,23 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from './productSchema';
 import { Model } from 'mongoose';
-import { CreateProduct } from './dto';
+import { CreateProduct, EditProduct } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { S3 } from 'aws-sdk'
 import {v4 as uuid} from 'uuid'
+import { RedisService } from '@liaoliaots/nestjs-redis';
+import Redis from 'ioredis'
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>,private readonly configService: ConfigService){}
+
+    private readonly redis: Redis
+
+    constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>,
+    private readonly configService: ConfigService, private readonly redisService: RedisService){
+        this.redis = this.redisService.getClient()
+    }
 
     bucketName = this.configService.get('AWS_BUCKET_NAME');
     s3 = new S3({
@@ -40,7 +48,7 @@ export class ProductService {
         const product = await this.productModel.findById({_id: productId})
         
         if(!product){
-            throw new ForbiddenException({ status: "false", message: "Product does not exists"})
+            throw new NotFoundException({ status: "false", message: "Product does not exists"})
         }
         if(product.creator !== userId){
             throw new ForbiddenException({ status: "false", message: "Access to resource denied"})
@@ -53,5 +61,33 @@ export class ProductService {
 
         await product.deleteOne()
         return {message: "Product deleted successfully", deletedFile}
+    }
+
+    async getAllProducts(userId: any){
+        const cachedData = await this.redis.get('products')
+        if(cachedData){
+            return JSON.parse(cachedData)
+        }
+        const products = await this.productModel.find({creator: userId})
+        await this.redis.setex('products', 20, JSON.stringify(products))
+        return products
+    }
+
+    async getProductById(userId: any, productId: string){
+        const cachedData = await this.redis.get('product')
+        if(cachedData){
+            return JSON.parse(cachedData)
+        }
+        const product = await this.productModel.find({_id: productId, creator: userId})
+        await this.redis.setex('product', 20, JSON.stringify(product))
+        return product
+    }
+
+    async editProduct(userId: any, productId: string, dto: EditProduct, filename: string, dataBuffer: Buffer){
+        const product = await this.productModel.findById({_id: productId})
+        if(!product){
+            throw new NotFoundException({ status: "false", message: "Product does not exists"})
+        }
+        
     }
 }

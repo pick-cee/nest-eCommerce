@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { GetUser } from 'src/auth/decorator';
 import { CreateProduct } from './dto';
@@ -22,4 +22,20 @@ export class ProductController {
     deleteProduct(@GetUser('userId') userId: any, @Param('id') productId: string){        
         return this.productService.deleteProduct(userId, productId)
     }
+
+    @HttpCode(HttpStatus.OK)
+    @Get()
+    getProducts(@GetUser('userId') userId: any){
+        return this.productService.getAllProducts(userId)
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Get(':id')
+    getProductsById(@GetUser('userId') userId: any, @Param('id') productId: string){
+        return this.productService.getProductById(userId, productId)
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Patch(':id')
+    updateProduct(){}
 }
