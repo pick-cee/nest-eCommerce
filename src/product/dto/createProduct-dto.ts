@@ -11,10 +11,5 @@ export class CreateProduct{
     @IsNotEmpty()
     price: string
 
-    @IsString()
-    @IsNotEmpty()
-    photo: string
-
-    @IsMongoId()
     creator: User
 }
