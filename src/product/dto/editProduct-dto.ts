@@ -1,5 +1,4 @@
-import { IsMongoId, IsOptional, IsString } from "class-validator"
-import { User } from "src/user/userSchema"
+import { IsOptional, IsString } from "class-validator"
 
 
 export class EditProduct{
@@ -11,10 +10,4 @@ export class EditProduct{
     @IsOptional()
     price: string
 
-    @IsString()
-    @IsOptional()
-    photo: string
-
-    @IsMongoId()
-    creator: User
 }

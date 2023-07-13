@@ -1,11 +1,10 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, Req, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from './productSchema';
 import { Model } from 'mongoose';
 import { CreateProduct, EditProduct } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { S3 } from 'aws-sdk'
-import {v4 as uuid} from 'uuid'
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis'
 
@@ -83,11 +82,38 @@ export class ProductService {
         return product
     }
 
-    async editProduct(userId: any, productId: string, dto: EditProduct, filename: string, dataBuffer: Buffer){
-        const product = await this.productModel.findById({_id: productId})
-        if(!product){
-            throw new NotFoundException({ status: "false", message: "Product does not exists"})
-        }
-        
-    }
+    /* This was commented out because I am still thinking of a work around for this 
+    solution, but it has been implemented in the controller file.
+    */
+
+    // async editProduct(userId: any, productId: string, dto: EditProduct, filename: string, dataBuffer: Buffer){
+    //     const product = await this.productModel.findById({_id: productId})
+    //     if(!product){
+    //         throw new NotFoundException({ status: "false", message: "Product does not exists"})
+    //     }
+    //     if(){
+    //         const uploadedFile = await this.s3.upload({
+    //             Bucket: this.bucketName,
+    //             Body: dataBuffer,
+    //             Key: `${filename}`,
+    //         }).promise()
+
+    //         // delete old file from S3
+    //         const oldFileKey = product.photo?.split("/").pop();
+    //         await this.s3.deleteObject({
+    //             Bucket: this.bucketName,
+    //             Key: oldFileKey
+    //         }).promise()
+
+    //         //update the product's photo
+    //         product.photo = uploadedFile.Location
+    //     }
+
+    //     //update the other fields
+    //     product.productName = dto.productName || product.productName 
+    //     product.price = dto.price || product.price 
+
+    //     const prod = await product.save()
+    //     return {message: "Products updated successfully", prod}
+    // }
 }
