@@ -33,15 +33,34 @@ export class PaymentService {
             reference: Math.random().toString()
         })
 
-        const newPayment = new this.paymentModel({
-            price: product.price,
-            referenceId: init.data.reference,
-            productId: product._id,
-            userId: user._id,
-            transactionStatus: init.status
-        })
+        const verify = await this.paystackClient.transaction.verify(init.data.reference)
+        if(verify.status == true){
+            const newPayment = new this.paymentModel({
+                price: product.price,
+                referenceId: init.data.reference,
+                productId: product._id,
+                userId: user._id,
+                transactionStatus: init.status
+            })
+            await newPayment.save()
+            return {message: "Payment made", PaymentDetails: newPayment, init}
+        }
+    }
 
-        await newPayment.save()
-        return {message: "Payment made", PaymentDetails: newPayment, init}
+    async verifyPayment(paymentId: any){
+        const payment = await this.paymentModel.findById({_id: paymentId})
+        const verify = await this.paystackClient.transaction.verify(payment.referenceId)
+        if(verify.status == true){
+            return {message: 'Payment verification successful'}
+        }
+    }
+
+    async getPaymentHistory(userId: any){
+        const user = await this.userModel.findById({_id: userId})
+        const payment = await this.paymentModel.find({userId: user._id})
+        if(!payment){
+            throw new NotFoundException("You have no payment records")
+        }
+        return {paymentHistory: payment}
     }
 }
