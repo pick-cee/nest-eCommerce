@@ -7,6 +7,7 @@ import { AppConfigurationModule } from './configuration';
 import { PaymentModule } from './payment/payment.module';
 import { ProductModule } from './product/product.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { PaystackModule } from 'nestjs-paystack';
 
 @Module({
   imports: [AuthModule, UserModule,ConfigModule.forRoot({isGlobal: true}), 
@@ -26,7 +27,16 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     },
     inject: [ConfigService]
    }),
-   UserModule, AuthModule, PaymentModule, ProductModule
+   UserModule, AuthModule, PaymentModule, ProductModule,
+   PaystackModule.forRootAsync({
+    useFactory: async (config: ConfigService) => {
+      const secretKey = config.get("PAYSTACK_SECRET_KEY")
+      return {
+        apiKey: secretKey
+      }
+    },
+    inject: [ConfigService]
+   })
   ],
   controllers: [],
   providers: [],

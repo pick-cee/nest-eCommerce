@@ -8,6 +8,6 @@ export class EditProduct{
 
     @IsString()
     @IsOptional()
-    price: string
+    price: number
 
 }

@@ -11,7 +11,7 @@ export class Product{
     productName: string
 
     @Prop({required: true})
-    price: string
+    price: number
 
     @Prop({required: true})
     photo: string

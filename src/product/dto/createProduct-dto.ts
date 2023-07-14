@@ -9,7 +9,7 @@ export class CreateProduct{
 
     @IsString()
     @IsNotEmpty()
-    price: string
+    price: number
 
     creator: User
 }
