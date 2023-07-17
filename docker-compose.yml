@@ -1,0 +1,11 @@
+version: '3.8'
+services: 
+  test-db:
+    image: mongo
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      ME_CONFIG_MONGODB_URL: mongodb://127.0.0.1/nest_eCommerce_Test
