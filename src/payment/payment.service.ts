@@ -63,4 +63,10 @@ export class PaymentService {
         }
         return {paymentHistory: payment}
     }
+
+    async getSucessfulTransactions(userId: any){
+        const user = await this.userModel.findById({_id: userId})
+        const payment = await this.paymentModel.find({userId: user, transactionStatus: true})
+        return {payment}
+    }
 }

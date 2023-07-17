@@ -24,4 +24,10 @@ export class PaymentController {
     getPaymentHistory(@GetUser('userId') userId: any){
         return this.paymentService.getPaymentHistory(userId)
     }
+
+    @HttpCode(HttpStatus.OK)
+    @Get('/successful-transactions')
+    getSuccessful(@GetUser('userId') userId: any){
+        return this.paymentService.getSucessfulTransactions(userId)
+    }
 }
