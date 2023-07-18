@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { GetUser } from 'src/auth/decorator';
+import { GetUser } from '../auth/decorator';
 import { CreateProduct, EditProduct } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtGuard } from 'src/auth/guard';
+import { JwtGuard } from '../auth/guard';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from './productSchema';
 import { Model } from 'mongoose';

@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose';
-import { User, UserDocument } from 'src/user/userSchema';
+import { User, UserDocument } from '../user/userSchema';
 import { SignUp, signIn } from './dto';
 import * as argon from 'argon2'
 import { ConfigService } from '@nestjs/config';
