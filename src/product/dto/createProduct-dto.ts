@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsString } from "class-validator"
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator"
 import { User } from "src/user/userSchema"
 
 
@@ -11,5 +11,6 @@ export class CreateProduct{
     @IsNotEmpty()
     price: number
 
-    creator: User
+    // @IsOptional()
+    // creator: User
 }

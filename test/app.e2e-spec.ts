@@ -4,6 +4,9 @@ import * as pactum from 'pactum'
 import { SignUp, signIn } from '../src/auth/dto';
 import { AppTestModule } from '../src/appTest.module';
 import { MongooseService } from '../src/appTest.Service';
+import { EditUserDTO } from '../src/user/dto/edit-user.dto';
+import { CreateProduct } from '../src/product/dto';
+import { User } from '../src/user/userSchema';
 
 
 
@@ -28,7 +31,6 @@ describe('AppController (e2e)', () => {
 
   afterAll(async () => {
     await app.close()
-    await mongod.cleanDb()
   })
 
   describe("Auth", () => {
@@ -68,6 +70,41 @@ describe('AppController (e2e)', () => {
       })
       it('should sign in', () => {
         return pactum.spec().post('/auth/signin').withBody(signIn).expectStatus(200).stores('userAt', 'access_token')
+      })
+    })
+  })
+
+  describe("User", () => {
+    it("it should update user", () => {
+      const dto: EditUserDTO = {
+        firstName: "AKinloluwa"
+      }
+      return pactum.spec().patch('/user/editUser').withHeaders({Authorization: 'Bearer $S{userAt}'}).withBody(dto)
+      .expectStatus(200)
+    })
+    it("deleteUser", () => {
+      return pactum.spec().delete('/user/deleteUser').withHeaders({Authorization: 'Bearer $S{userAt}'}).expectStatus(200)
+    })
+    it("sholuld update password", () => {
+      return pactum.spec().patch('/user/changePassword').withHeaders({Authorization: 'Bearer $S{userAt}'})
+      .withBody({password: "AKINLOLUWA"})
+    })
+  })
+
+  describe("Product", () => {
+    const createProduct: CreateProduct = {
+      productName: "Nike Slides",
+      price: 400,
+      // creator: new User
+    }
+    describe("it should add a new product", () => {
+      it("should throw an exception if product name empty", () => {
+        return pactum.spec().post('/product/createProduct').withHeaders({Authorization: 'Bearer $S{userAt}'})
+        .withBody({price: createProduct.price}).expectStatus(400)
+      })
+      it("should throw an exception if price empty", () => {
+        return pactum.spec().post('/product/createProduct').withHeaders({Authorization: 'Bearer $S{userAt}'}).
+        withBody({productName: createProduct.productName}).expectStatus(400)
       })
     })
   })
